@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = "java-app"
-        IMAGE_TAG = "${APP_NAME}:latest"
+        IMAGE_TAG = "${APP_NAME}:${GIT_COMMIT}"
     }
 
     stages {
@@ -15,7 +15,9 @@ pipeline {
 
         stage('Build Java App') {
             steps {
-                sh 'mvn clean install'
+                dir('spring-boot-app') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
