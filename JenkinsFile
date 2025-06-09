@@ -23,7 +23,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_TAG .'
+                dir('spring-boot-app') {
+                    sh 'docker build -t $IMAGE_TAG .'
+                }
             }
         }
 
