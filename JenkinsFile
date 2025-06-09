@@ -33,7 +33,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f $APP_NAME || true
-                docker run -d --name $APP_NAME -p 8070:8090 $IMAGE_TAG
+                docker run -d --name $APP_NAME -p 8070:8080 $IMAGE_TAG
                 '''
             }
         }
