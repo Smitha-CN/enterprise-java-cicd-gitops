@@ -1,1 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "your-dockerhub-user/demo:${GIT_COMMIT}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build & Test') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('SonarQube Analysis') {
+            environment {
+                SONAR_HOST_URL = 'http://your-sonarqube-server:9000'
+            }
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE .'
+                sh 'docker push $DOCKER_IMAGE'
+            }
+        }
+        stage('Update GitOps Repo') {
+            steps {
+                sh '''
+                  sed -i "s|image: .*|image: $DOCKER_IMAGE|g" ../manifests/deployment.yaml
+                  git config --global user.email "ci@example.com"
+                  git config --global user.name "CI Bot"
+                  git add ../manifests/deployment.yaml
+                  git commit -m "Update image to $DOCKER_IMAGE"
+                  git push origin main
+                '''
+            }
+        }
+    }
+}
 
