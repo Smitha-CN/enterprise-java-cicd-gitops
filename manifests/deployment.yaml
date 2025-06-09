@@ -13,8 +13,8 @@ spec:
         app: demo
     spec:
       containers:
-        - name: demo
-          image: your-dockerhub-user/demo:latest
+        - name: myapp
+          image: smithacn/myapp:latest
           ports:
             - containerPort: 8080
 ---
