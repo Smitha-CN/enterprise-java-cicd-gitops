@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+tools {
+    maven 'Maven 3'   // Must match the name in Jenkins
+    jdk 'JDK 17'      // Also make sure JDK is installed in Jenkins
+}
         environment {
         DOCKER_IMAGE = "smithacn/myapp:${GIT_COMMIT}"
     }
