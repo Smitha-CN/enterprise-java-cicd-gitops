@@ -22,11 +22,18 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+       stage('SonarQube Analysis') {
             steps {
-                dir('spring-boot-app') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner"
+                withSonarQubeEnv('SonarQube') {
+                    dir('spring-boot-app') {
+                        sh '''
+                        /opt/sonar-scanner/bin/sonar-scanner \
+                          -Dsonar.projectKey=java-app \
+                          -Dsonar.sources=. \
+                          -Dsonar.java.binaries=target \
+                          -Dsonar.host.url=http://98.84.138.229:9000 \
+                          -Dsonar.login=squ_4fb5dce9ffb5040ec9114690f8b95e2bd9e2a1a0
+                        '''
                     }
                 }
             }
