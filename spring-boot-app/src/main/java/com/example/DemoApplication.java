@@ -3,7 +3,6 @@ package com.example;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @SpringBootApplication
 @RestController
@@ -12,8 +11,7 @@ public class DemoApplication {
 
     @GetMapping()
     public String hello() {
-	String smitha="smitha";
-        return "Hello from CI/CD pipeline!";
+	return "Hello from CI/CD pipeline!";
     }
 
 	public static void main(String[] args) {
