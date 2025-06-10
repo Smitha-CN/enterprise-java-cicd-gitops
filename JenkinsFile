@@ -4,6 +4,7 @@ pipeline {
     environment {
         APP_NAME = "java-app"
         IMAGE_TAG = "${APP_NAME}:${GIT_COMMIT}"
+        SONAR_SCANNER_HOME = tool 'SonarScanner' // Ensure this tool name matches your Jenkins config
     }
 
     stages {
@@ -17,6 +18,24 @@ pipeline {
             steps {
                 dir('spring-boot-app') {
                     sh 'mvn clean install'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('spring-boot-app') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh "${SONAR_SCANNER_HOME}/bin/sonar-scanner"
+                    }
+                }
+            }
+        }
+
+        stage('Wait for Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
