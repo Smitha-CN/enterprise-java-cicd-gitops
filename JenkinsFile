@@ -3,8 +3,11 @@ pipeline {
 
     environment {
         APP_NAME = "java-app"
-        IMAGE_TAG = "${APP_NAME}:${GIT_COMMIT}"
-        SONAR_SCANNER_HOME = tool 'SonarScanner' // Ensure this tool name matches your Jenkins config
+        AWS_REGION = "us-east-1"
+        AWS_ACCOUNT_ID = "214046906664"  
+        ECR_REPO = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}"
+        IMAGE_TAG = "${GIT_COMMIT}"
+        SONAR_SCANNER_HOME = tool 'SonarScanner' // Ensure this matches Jenkins tool name
     }
 
     stages {
@@ -22,7 +25,7 @@ pipeline {
             }
         }
 
-       stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     dir('spring-boot-app') {
@@ -50,17 +53,20 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('spring-boot-app') {
-                    sh 'docker build -t $IMAGE_TAG .'
+                    sh 'docker build -t ${APP_NAME}:${IMAGE_TAG} .'
                 }
             }
         }
 
-        stage('Run Docker Container (locally on EC2)') {
+        stage('Push Image to ECR') {
             steps {
-                sh '''
-                docker rm -f $APP_NAME || true
-                docker run -d --name $APP_NAME -p 8070:8090 $IMAGE_TAG
-                '''
+                dir('spring-boot-app') {
+                    sh """
+                    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                    docker tag ${APP_NAME}:${IMAGE_TAG} $ECR_REPO:${IMAGE_TAG}
+                    docker push $ECR_REPO:${IMAGE_TAG}
+                    """
+                }
             }
         }
     }
