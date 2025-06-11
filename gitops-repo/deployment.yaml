@@ -1,11 +1,11 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: java-app
-  namespace: default
+  labels:
+    app: java-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: java-app
@@ -15,7 +15,8 @@ spec:
         app: java-app
     spec:
       containers:
-      - name: java-app
-        image: 214046906664.dkr.ecr.us-east-1.amazonaws.com/java-app:74fac7f1207780d73480e434b54e5251db0fe7ef
-        ports:
-        - containerPort: 8090
+        - name: java-app
+          image: 214046906664.dkr.ecr.us-east-1.amazonaws.com/java-app:latest # <--- Jenkins updates this tag
+          ports:
+            - containerPort: 8090
+          imagePullPolicy: Always
