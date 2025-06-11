@@ -19,4 +19,5 @@ spec:
           image: 214046906664.dkr.ecr.us-east-1.amazonaws.com/java-app:latest # <--- Jenkins updates this tag
           ports:
             - containerPort: 8090
+            - containerPort: 8060  # metrics port
           imagePullPolicy: Always
