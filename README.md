@@ -22,8 +22,7 @@ This project demonstrates a complete CI/CD pipeline for a Java-based microservic
 ---
 
 ## 🏗️ Architecture
-
-![Architecture](./path-to-your-architecture-diagram.png)
+![Image](https://github.com/user-attachments/assets/be62eaf7-0da0-47cd-ab9b-34e2dd0b1262)
 
 1. Developers push code to **GitHub**
 2. A **webhook** triggers the **Jenkins** pipeline
